@@ -86,16 +86,10 @@ data i03AAbbottEducation_xlsx2;
  set i03AAbbottEducation_xlsx;
 if state = "DC" then statename = "District of Columbia"; else statename = state;
 statename = PROPCASE(statename);
-PctMalesNeverMarried = floor(PctMalesNeverMarried * 1000)/10;  * convert to ##.# format ;
-PctfemalesNeverMarried = floor(PctFemalesNeverMarried * 1000)/10; * convert to ##.# format ;
 drop state;
 rename PctMalesNeverMarried=PctMalesNeverMarried03;
 rename PctFemalesNeverMarried = PctFemalesNeverMarried03;
 run;
-
-title1  "i03AAbbottEducation.xlsx";
- proc print data = i03AAbbottEducation_xlsx2;
- run;
 
 proc sort data = combined01;
 by statename;
@@ -125,23 +119,14 @@ dbms = xlsx replace;
 getnames = yes;
  run;
 
-title1 "i04WhitePerBlackPer";
- proc print data = i04WhitePerBlackPer_xlsx;
- run;
-
 data i04WhitePerBlackPer_xlsx2;
   length statename $ 32 ;
  set i04WhitePerBlackPer_xlsx;
 if location = "DC" then statename = "District of Columbia"; else statename = location;
 statename = PROPCASE(statename);
-White = round(White *100,.1); * convert to ##.# format ;
-Black = round(Black *100,.1); * convert to ##.# format ;
 drop Location;
 rename White = PctWhite04;
 rename Black = PctBlack04;
-format PctWhite04 D9.1;
-format PctBlack04 D9.1;
-
 run;
 
 Proc sort data = i04WhitePerBlackPer_xlsx2;
@@ -170,26 +155,20 @@ namerow = 1;
 startrow =2;
  run;
 
- title1 "i06PublicPrivateSchoolsClean_xls";
- proc print data = i06PublicPrivateSchoolsClean;
- run;
-
 data i06PublicPrivateSchoolsClean_2;
   length statename $ 32 ;
  set i06PublicPrivateSchoolsClean;
 if state = "DC" then statename = "District of Columbia"; else statename = state;
 statename = PROPCASE(statename);
-HS_PCT_Private = Round(HS_PCT_Private *1000/10,.1);* convert to ##.# format ;
 drop state;
 rename HS_PCT_Private = HS_Pct_Private06;
-format HS_Pct_Private06 F9.1;
 run;
 
 Proc sort data = i06PublicPrivateSchoolsClean_2;
 by statename;
 run;
 
-title1 "i06PublicPrivateSchoolsClean2_xls";
+title1 "i06PublicPrivateSchoolsClean_xls";
  proc print data = i06PublicPrivateSchoolsClean_2;
  run;
 
@@ -225,7 +204,6 @@ if state = "Virgina" then state = "Virginia";
 if state = "DC" then statename = "District of Columbia"; else statename = state;
 statename = PROPCASE(statename);
 PCT_PovertyLevel = PCT_PovertyLevel/100.0;
-PCT_povertyLevel = floor(PCT_povertyLevel *1000/10);* convert to ##.# format ;
 drop state;
 rename PCT_povertyLevel = PctPovertyLevel08;
 run;
@@ -266,8 +244,6 @@ data i09PercentAPStudents_csv2;
  set i09PercentAPStudents_csv;
 if state = "DC" then statename = "District of Columbia"; else statename = state;
 statename = PROPCASE(statename);
-PCT_Students_AP_2014_09 = floor(PCT_Students_AP_2014_09 *1000/10);* convert to ##.# format ;
-PCT_Students_AP_2015_09 = floor(PCT_Students_AP_2015_09 *1000/10);* convert to ##.# format ;
 drop state;
 run;
 
@@ -378,7 +354,6 @@ data i14HS_graduate_2009_xls2;
 set i14HS_graduate_2009_xls;
 rename A = state;
 PCT_HS_Grad14 = B/100;
-PCT_HS_Grad14 = floor(PCT_HS_Grad14 *1000/10);* convert to ##.# format ;
 *Keep state PCT_HS_Grad14;
 run;
 
@@ -421,7 +396,6 @@ getnames = yes;
  data i15SchoolLunch_csv;
  set i15SchoolLunch_csv;
  if state = "IO" then state = "IA";
- PERCENT = floor(PERCENT *1000/10);* convert to ##.# format ;
  rename PERCENT = Pct_SchoolLunch15;
  run;
 
@@ -743,9 +717,3 @@ Title1 "SAT ACT data combined with available statistics Better version";
 proc print data = SATACT2 ;
 run;
 
-* I really wanted the output to have one decimal place padded with zero if necessary and could not figure out a way to do that. SAS is frustrating;
-
-proc export data = SATACT2
-outfile = "\\client\c$\Users\anobs\Documents\GitHub\Unit11SATACT\Analysis\Output\RLISBONA_SATACT_Week11.csv"
-dbms = csv replace;
-run;
