@@ -160,6 +160,46 @@ Data Combined04;
 Proc print data = Combined04;
 run;
 
+*******************************   05   ***********************************************************************;
+
+Data i05MandatoryKindergarten_csv; 
+infile "\\client\c$\Users\anobs\Documents\GitHub\Unit11SATACT\Analysis\Stage4Import\05MandatoryKindergarten.csv" Firstobs = 1 delimiter =",";
+*replace;
+*dbms = csv replace;
+*getnames = yes;
+length state $32;
+input state $ MandatoryKindergarten $;
+ run;
+
+title1 "i05MandatoryKindergarten_csv";
+  proc print data = i05MandatoryKindergarten_csv;
+ run;
+
+data i05MandatoryKindergarten_csv2;
+  length statename $ 32 ;
+ set i05MandatoryKindergarten_csv;
+if state NE "State";
+if state = "DC" then statename = "District of Columbia"; else statename = state;
+statename = PROPCASE(statename);
+drop state;
+rename MandatoryKindergarten = MandatoryKindergarten05;
+run;
+
+title1 "i05MandatoryKindergarten_csv2";
+ proc print data = i05MandatoryKindergarten_csv2;
+ run;
+
+ proc sort data = i05MandatoryKindergarten_csv2;
+ by statename;
+ run;
+
+Data Combined05;
+ merge Combined04 i05MandatoryKindergarten_csv2;
+ by Statename;
+
+ title1 "Combined - 05";
+Proc print data = Combined05;
+run;
 *******************************   06   ***********************************************************************;
 
 Proc Import Out = i06PublicPrivateSchoolsClean (KEEP = State  HS_PCT_Private  )
@@ -194,7 +234,7 @@ title1 "i06PublicPrivateSchoolsClean2_xls";
  run;
 
 Data Combined06;
- merge Combined04 i06PublicPrivateSchoolsClean_2;
+ merge Combined05 i06PublicPrivateSchoolsClean_2;
  by Statename;
 
  title1 "Combined - 06";
